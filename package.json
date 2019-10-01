@@ -1,0 +1,14 @@
+{
+  "name": "mindtrack",
+  "version": "1.0.0",
+  "description": "App to record ideas for future use",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Damilola",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.4"
+  }
+}
