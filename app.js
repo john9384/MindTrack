@@ -9,14 +9,17 @@ app.engine('handlebars', exphbs({
 }));
 app.set('view engine', 'handlebars');
 
-// Index Route
+// Route to index
 app.get('/', (req, res) => {
-  res.send('INDEX');
+  const title = 'Hello there';
+  res.render('index', {
+    title: title
+  });
 });
 
-// About Route
+// Route to about
 app.get('/about', (req, res) => {
-  res.send('ABOUT');
+  res.render('about');
 });
 
 // Port connection setup
