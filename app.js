@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-// Mapping global promise to get rid of warning, though not displayed on new versions of mongoose
+// Mapping global promise to get rid of warning about promise, though not displayed on new versions of mongoose
 // mongoose.Promise = globalPromise;
 
 //Connecting to the mongoose DB
@@ -14,6 +14,10 @@ mongoose.connect('mongodb://localhost/mindtrack',{
   useUnifiedTopology: true
 
 }).then(() => console.log("MongoDB Connected...")).catch(err => console.log(err));
+
+// Loading the Idea Model
+require('./models/Idea');
+const Idea = mongoose.model('ideas');
 
 // Setting up the handlebars middleware
 app.engine('handlebars', exphbs({
