@@ -1,7 +1,19 @@
 const express = require('express');
 const exphbs  = require('express-handlebars');
+const mongoose = require('mongoose');
 
 const app = express();
+
+// Mapping global promise to get rid of warning, though not displayed on new versions of mongoose
+// mongoose.Promise = globalPromise;
+
+//Connecting to the mongoose DB
+mongoose.connect('mongodb://localhost/mindtrack',{
+  //useMongoClient: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+
+}).then(() => console.log("MongoDB Connected...")).catch(err => console.log(err));
 
 // Setting up the handlebars middleware
 app.engine('handlebars', exphbs({
