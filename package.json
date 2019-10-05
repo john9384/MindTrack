@@ -9,6 +9,7 @@
   "author": "Damilola",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.15.4",
     "express-handlebars": "^3.0.0",
     "mongoose": "^5.7.1"
