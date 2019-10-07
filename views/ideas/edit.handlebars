@@ -4,13 +4,13 @@
 
 {{/each}}
 <div class="card card-body">
-    <h3>Track</h3>
+    <h3>Edit Track</h3>
     <form action="/ideas" method="POST">
         <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" class="form-control" name="title" required>
+            <input type="text" class="form-control" name="title" value="{{idea.title}}" required>
             <label for="details">Details</label>
-            <textarea type="text" class="form-control" name="details" required></textarea>
+            <textarea type="text" class="form-control" name="details" required>{{idea.details}}</textarea>
         </div>
         <button type="submit" class="btn btn-secondary">Submit</button>
 
