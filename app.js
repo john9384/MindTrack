@@ -35,7 +35,7 @@ app.set("view engine", "handlebars");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Route to index
+// Route to index/ main view for handlebars
 app.get("/", (req, res) => {
   const title = "Hello There";
   res.render("index", {
@@ -76,9 +76,19 @@ app.post("/ideas", (req, res) => {
       details: req.body.details
     };
     new Idea(newUser).save().then(idea => {
-      res.redirect("/idea");
+      res.redirect("/ideas");
     });
   }
+});
+// Route to the ideas page
+app.get("/ideas", (req, res) => {
+  Idea.find({})
+    .sort({ date: "desc" })
+    .then(ideas => {
+      res.render("ideas/index", {
+        ideas: ideas
+      });
+    });
 });
 
 // Port connection setup
