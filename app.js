@@ -1,12 +1,10 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
+const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const app = express();
-
-// Mapping global promise to get rid of warning about promise, though not displayed on new versions of mongoose
-// mongoose.Promise = globalPromise;
 
 //Connecting to the mongoose DB
 mongoose
@@ -32,8 +30,15 @@ app.engine(
 app.set("view engine", "handlebars");
 
 // Body Parser middleware
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
 app.use(bodyParser.json());
+
+// The method override middleware
+app.use(methodOverride("_method"));
 
 // Route to index/ main view for handlebars
 app.get("/", (req, res) => {
@@ -52,6 +57,18 @@ app.get("/about", (req, res) => {
 app.get("/ideas/add", (req, res) => {
   res.render("ideas/add");
 });
+// Route to the ideas page
+app.get("/ideas", (req, res) => {
+  Idea.find({})
+    .sort({
+      date: "desc"
+    })
+    .then(ideas => {
+      res.render("ideas/index", {
+        ideas: ideas
+      });
+    });
+});
 
 //Route to the edit Idea page
 app.get("/ideas/edit/:id", (req, res) => {
@@ -69,10 +86,14 @@ app.post("/ideas", (req, res) => {
   let errors = [];
 
   if (!req.body.title) {
-    errors.push({ text: "Please add a title" });
+    errors.push({
+      text: "Please add a title"
+    });
   }
   if (!req.body.details) {
-    errors.push({ text: "Please add some details" });
+    errors.push({
+      text: "Please add some details"
+    });
   }
 
   if (errors.length > 0) {
@@ -91,15 +112,19 @@ app.post("/ideas", (req, res) => {
     });
   }
 });
-// Route to the ideas page
-app.get("/ideas", (req, res) => {
-  Idea.find({})
-    .sort({ date: "desc" })
-    .then(ideas => {
-      res.render("ideas/index", {
-        ideas: ideas
-      });
+
+// Precessing edited form
+app.put("/ideas/:id", (req, res) => {
+  Idea.findOne({
+    _id: req.params.id
+  }).then(idea => {
+    idea.title = req.body.title;
+    idea.details = req.body.details;
+
+    idea.save().then(idea => {
+      res.redirect("/ideas");
     });
+  });
 });
 
 // Port connection setup

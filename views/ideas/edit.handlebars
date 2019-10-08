@@ -5,7 +5,8 @@
 {{/each}}
 <div class="card card-body">
     <h3>Edit Track</h3>
-    <form action="/ideas" method="POST">
+    <form method="POST" action="/ideas/{{idea.id}}?_method=PUT">
+        <input type="hidden" name="_method" value="PUT">
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" class="form-control" name="title" value="{{idea.title}}" required>
