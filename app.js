@@ -127,6 +127,13 @@ app.put("/ideas/:id", (req, res) => {
   });
 });
 
+// Handling the Deleting request
+app.delete("/ideas/:id", (req, res) => {
+  Idea.deleteOne({ _id: req.params.id }).then(() => {
+    res.redirect("/ideas");
+  });
+});
+
 // Port connection setup
 const port = 3000;
 app.listen(port, () => {
