@@ -1,6 +1,8 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
 const methodOverride = require("method-override");
+const flash = require("connect-flash");
+const session = require("express-session");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
@@ -40,6 +42,25 @@ app.use(bodyParser.json());
 // The method override middleware
 app.use(methodOverride("_method"));
 
+// The express-session middleware
+app.use(
+  session({
+    secret: "web-secret",
+    resave: true,
+    saveUninitialized: true
+  })
+);
+
+// The connect-flash midlleware
+app.use(flash());
+
+// The global variables used for the flash messages
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  res.locals.error = req.flash("error");
+  next();
+});
 // Route to index/ main view for handlebars
 app.get("/", (req, res) => {
   const title = "Hello There";
@@ -108,6 +129,7 @@ app.post("/ideas", (req, res) => {
       details: req.body.details
     };
     new Idea(newUser).save().then(idea => {
+      req.flash("success_msg", "New Track Added");
       res.redirect("/ideas");
     });
   }
@@ -122,6 +144,7 @@ app.put("/ideas/:id", (req, res) => {
     idea.details = req.body.details;
 
     idea.save().then(idea => {
+      req.flash("success_msg", "Track Edited");
       res.redirect("/ideas");
     });
   });
@@ -129,7 +152,8 @@ app.put("/ideas/:id", (req, res) => {
 
 // Handling the Deleting request
 app.delete("/ideas/:id", (req, res) => {
-  Idea.deleteOne({ _id: req.params.id }).then(() => {
+  Idea.deleteOneb({ _id: req.params.id }).then(() => {
+    req.flash("success_msg", "Track Delete");
     res.redirect("/ideas");
   });
 });
