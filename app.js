@@ -8,6 +8,9 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+// Loading routes
+const ideas = require("./routes/ideas");
+
 //Connecting to the mongoose DB
 mongoose
   .connect("mongodb://localhost/mindtrack", {
@@ -17,10 +20,6 @@ mongoose
   })
   .then(() => console.log("MongoDB Connected..."))
   .catch(err => console.log(err));
-
-// Loading the Idea Model
-require("./models/Idea");
-const Idea = mongoose.model("ideas");
 
 // Setting up the handlebars middleware
 app.engine(
@@ -74,89 +73,18 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
-//Route to the Idea form
-app.get("/ideas/add", (req, res) => {
-  res.render("ideas/add");
-});
-// Route to the ideas page
-app.get("/ideas", (req, res) => {
-  Idea.find({})
-    .sort({
-      date: "desc"
-    })
-    .then(ideas => {
-      res.render("ideas/index", {
-        ideas: ideas
-      });
-    });
+// The login route
+app.get("/users/login", (req, res) => {
+  res.send("User login");
 });
 
-//Route to the edit Idea page
-app.get("/ideas/edit/:id", (req, res) => {
-  Idea.findOne({
-    _id: req.params.id
-  }).then(idea => {
-    res.render("ideas/edit", {
-      idea: idea
-    });
-  });
+// The user registration route
+app.get("/users/register", (req, res) => {
+  res.send("User Register");
 });
 
-// Processing the Ideas from the form
-app.post("/ideas", (req, res) => {
-  let errors = [];
-
-  if (!req.body.title) {
-    errors.push({
-      text: "Please add a title"
-    });
-  }
-  if (!req.body.details) {
-    errors.push({
-      text: "Please add some details"
-    });
-  }
-
-  if (errors.length > 0) {
-    res.render("ideas/add", {
-      errors: errors,
-      title: req.body.title,
-      details: req.body.details
-    });
-  } else {
-    const newUser = {
-      title: req.body.title,
-      details: req.body.details
-    };
-    new Idea(newUser).save().then(idea => {
-      req.flash("success_msg", "New Track Added");
-      res.redirect("/ideas");
-    });
-  }
-});
-
-// Precessing edited form
-app.put("/ideas/:id", (req, res) => {
-  Idea.findOne({
-    _id: req.params.id
-  }).then(idea => {
-    idea.title = req.body.title;
-    idea.details = req.body.details;
-
-    idea.save().then(idea => {
-      req.flash("success_msg", "Track Edited");
-      res.redirect("/ideas");
-    });
-  });
-});
-
-// Handling the Deleting request
-app.delete("/ideas/:id", (req, res) => {
-  Idea.deleteOneb({ _id: req.params.id }).then(() => {
-    req.flash("success_msg", "Track Delete");
-    res.redirect("/ideas");
-  });
-});
+// Using the route
+app.use("/ideas", ideas);
 
 // Port connection setup
 const port = 3000;
