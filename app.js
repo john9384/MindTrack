@@ -1,5 +1,6 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
+const path = require("path");
 const methodOverride = require("method-override");
 const flash = require("connect-flash");
 const session = require("express-session");
@@ -10,6 +11,7 @@ const app = express();
 
 // Loading routes
 const ideas = require("./routes/ideas");
+const users = require("./routes/users");
 
 //Connecting to the mongoose DB
 mongoose
@@ -37,6 +39,9 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+
+// Joining the static folder
+app.use(express.static(path.join(__dirname, "assets")));
 
 // The method override middleware
 app.use(methodOverride("_method"));
@@ -73,18 +78,9 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
-// The login route
-app.get("/users/login", (req, res) => {
-  res.send("User login");
-});
-
-// The user registration route
-app.get("/users/register", (req, res) => {
-  res.send("User Register");
-});
-
 // Using the route
 app.use("/ideas", ideas);
+app.use("/users", users);
 
 // Port connection setup
 const port = 3000;
