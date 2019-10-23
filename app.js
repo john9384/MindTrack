@@ -16,7 +16,7 @@ const users = require("./routes/users");
 //Connecting to the mongoose DB
 mongoose
   .connect("mongodb://localhost/mindtrack", {
-    //useMongoClient: true
+    // useMongoClient: true
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
