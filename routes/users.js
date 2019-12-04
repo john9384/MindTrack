@@ -12,6 +12,15 @@ const User = mongoose.model("users");
 router.get("/login", (req, res) => {
   res.render("users/login");
 });
+// The login form processesing
+router.post("/login", (req, res) => {
+  passport.authenticate("local", {
+    successRedirect: "/ideas",
+    failureRedirect: "/users/login",
+    failureFlash: true
+  })(req, res);
+  next();
+});
 
 // The user registration route
 router.get("/register", (req, res) => {
