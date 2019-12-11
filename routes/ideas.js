@@ -2,12 +2,15 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
+// Load helpers
+const checkAuth = require("../helpers/auth").checkAuth;
+
 // Load Idea Model
 require("../models/Idea");
 const Idea = mongoose.model("ideas");
 
 // Idea Index Page
-router.get("/", (req, res) => {
+router.get("/", checkAuth, (req, res) => {
   Idea.find({})
     .sort({ date: "desc" })
     .then(ideas => {
@@ -18,12 +21,12 @@ router.get("/", (req, res) => {
 });
 
 // Add Idea Form
-router.get("/add", (req, res) => {
+router.get("/add", checkAuth, (req, res) => {
   res.render("ideas/add");
 });
 
 // Edit Idea Form
-router.get("/edit/:id", (req, res) => {
+router.get("/edit/:id", checkAuth, (req, res) => {
   Idea.findOne({
     _id: req.params.id
   }).then(idea => {
@@ -34,7 +37,7 @@ router.get("/edit/:id", (req, res) => {
 });
 
 // Process Form
-router.post("/", (req, res) => {
+router.post("/", checkAuth, (req, res) => {
   let errors = [];
 
   if (!req.body.title) {
@@ -63,7 +66,7 @@ router.post("/", (req, res) => {
 });
 
 // Edit Form process
-router.put("/:id", (req, res) => {
+router.put("/:id", checkAuth, (req, res) => {
   Idea.findOne({
     _id: req.params.id
   }).then(idea => {
@@ -79,7 +82,7 @@ router.put("/:id", (req, res) => {
 });
 
 // Delete Idea
-router.delete("/:id", (req, res) => {
+router.delete("/:id", checkAuth, (req, res) => {
   Idea.remove({ _id: req.params.id }).then(() => {
     req.flash("success_msg", "Track removed");
     res.redirect("/ideas");
