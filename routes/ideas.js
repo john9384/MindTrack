@@ -1,21 +1,15 @@
 const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
+const router = express.Router();
 
-// Loading the Idea Model
+// Load Idea Model
 require("../models/Idea");
 const Idea = mongoose.model("ideas");
 
-//Route to the Idea form
-router.get("/add", (req, res) => {
-  res.render("ideas/add");
-});
-// Route to the ideas page
+// Idea Index Page
 router.get("/", (req, res) => {
   Idea.find({})
-    .sort({
-      date: "desc"
-    })
+    .sort({ date: "desc" })
     .then(ideas => {
       res.render("ideas/index", {
         ideas: ideas
@@ -23,7 +17,12 @@ router.get("/", (req, res) => {
     });
 });
 
-//Route to the edit Idea page
+// Add Idea Form
+router.get("/add", (req, res) => {
+  res.render("ideas/add");
+});
+
+// Edit Idea Form
 router.get("/edit/:id", (req, res) => {
   Idea.findOne({
     _id: req.params.id
@@ -34,23 +33,19 @@ router.get("/edit/:id", (req, res) => {
   });
 });
 
-// Processing the Ideas from the form
+// Process Form
 router.post("/", (req, res) => {
   let errors = [];
 
   if (!req.body.title) {
-    errors.push({
-      text: "Please add a title"
-    });
+    errors.push({ text: "Please add a title" });
   }
   if (!req.body.details) {
-    errors.push({
-      text: "Please add some details"
-    });
+    errors.push({ text: "Please add some details" });
   }
 
   if (errors.length > 0) {
-    res.render("ideas/add", {
+    res.render("/add", {
       errors: errors,
       title: req.body.title,
       details: req.body.details
@@ -61,31 +56,32 @@ router.post("/", (req, res) => {
       details: req.body.details
     };
     new Idea(newUser).save().then(idea => {
-      req.flash("success_msg", "New Track Added ");
+      req.flash("success_msg", "Track added");
       res.redirect("/ideas");
     });
   }
 });
 
-// Precessing edited form
+// Edit Form process
 router.put("/:id", (req, res) => {
   Idea.findOne({
     _id: req.params.id
   }).then(idea => {
+    // new values
     idea.title = req.body.title;
     idea.details = req.body.details;
 
     idea.save().then(idea => {
-      req.flash("success_msg", "Track Edited");
+      req.flash("success_msg", "Track updated");
       res.redirect("/ideas");
     });
   });
 });
 
-// Handling the Deleting request
+// Delete Idea
 router.delete("/:id", (req, res) => {
-  Idea.deleteOne({ _id: req.params.id }).then(() => {
-    req.flash("success_msg", "Track Delete");
+  Idea.remove({ _id: req.params.id }).then(() => {
+    req.flash("success_msg", "Track removed");
     res.redirect("/ideas");
   });
 });
